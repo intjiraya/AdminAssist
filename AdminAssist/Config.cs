@@ -34,7 +34,6 @@ namespace AdminAssist
         public string ConsoleLog { get; set; } = "%nickname% => %value%";
 
         [Description("The message broadcasted to admins when a player calls for assistance.\n" +
-                     "Use %id% for the player's ID and %name% for the player's name.\n" +
                      "Set to an empty string to disable")]
         public string AdminsBroadcast { get; set; } = "<color=#FFA500>(%id%) %nickname% called the admins</color>";
 
