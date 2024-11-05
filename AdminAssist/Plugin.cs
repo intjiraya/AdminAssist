@@ -10,7 +10,7 @@ namespace AdminAssist
         public override string Name => "AdminAssist";
         public override string Prefix => "AdminAssist";
 
-        public override Version Version => new(1, 0, 0);
+        public override Version Version => new(1, 1, 0);
         public override Version RequiredExiledVersion => new(8, 13, 2);
         public override PluginPriority Priority => PluginPriority.Default;
 
