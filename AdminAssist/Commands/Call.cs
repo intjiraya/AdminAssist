@@ -11,12 +11,10 @@ namespace AdminAssist.Commands
     public class Call : ICommand
     {
         public string Command { get; } = Plugin.Instance.Config.CommandAliases.First();
-        public string[] Aliases { get; } = Plugin.Instance.Config.CommandAliases.Count > 1
-            ? Plugin.Instance.Config.CommandAliases.Skip(1).ToArray()
-            : new string[] { };
-        public string Description { get; } = "Call the admin for assistance.";
+        public string[] Aliases { get; } = Plugin.Instance.Config.CommandAliases.Skip(1).ToArray();
+        public string Description => "Call the admin for assistance.";
 
-        private static readonly Dictionary<string, DateTime> LastCommandUsage = new Dictionary<string, DateTime>();
+        private static readonly Dictionary<string, DateTime> LastCommandUsage = new();
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
@@ -27,70 +25,89 @@ namespace AdminAssist.Commands
                 return false;
             }
 
-            string playerId = callingPlayer.UserId;
-            float cooldown = Plugin.Instance.Config.Cooldown;
+            if (!CanUseCommand(callingPlayer.UserId, Plugin.Instance.Config.Cooldown, out response))
+                return false;
 
-            if (cooldown > 0)
+            var argumentsStr = FormatArguments(arguments);
+            var receivers = GetReceivers();
+
+            NotifyAdmins(callingPlayer, argumentsStr, receivers);
+            response = "Admins have been notified!";
+            return true;
+        }
+
+        private bool CanUseCommand(string playerId, float cooldown, out string response)
+        {
+            if (cooldown <= 0)
             {
-                DateTime currentTime = DateTime.Now;
-
-                if (LastCommandUsage.TryGetValue(playerId, out DateTime lastUsageTime))
-                {
-                    TimeSpan elapsedTime = currentTime - lastUsageTime;
-
-                    if (elapsedTime.TotalSeconds < cooldown)
-                    {
-                        double timeLeft = cooldown - elapsedTime.TotalSeconds;
-                        response = $"You must wait {timeLeft:F1} seconds before using this command again.";
-                        return false;
-                    }
-                }
-
-                LastCommandUsage[playerId] = currentTime;
+                response = null;
+                return true;
             }
 
-            string argumentsStr = string.Join(" ", arguments).Replace("<", "[").Replace(">", "]");
+            var currentTime = DateTime.Now;
 
-            HashSet<Player> receivers = Player.List
+            if (LastCommandUsage.TryGetValue(playerId, out var lastUsageTime))
+            {
+                var elapsedTime = currentTime - lastUsageTime;
+
+                if (elapsedTime.TotalSeconds < cooldown)
+                {
+                    var timeLeft = cooldown - elapsedTime.TotalSeconds;
+                    response = $"You must wait {timeLeft:F1} seconds before using this command again.";
+                    return false;
+                }
+            }
+
+            LastCommandUsage[playerId] = currentTime;
+            response = null;
+            return true;
+        }
+
+        private string FormatArguments(ArraySegment<string> arguments)
+        {
+            return string.Join(" ", arguments).Replace("<", "[").Replace(">", "]");
+        }
+
+        private HashSet<Player> GetReceivers()
+        {
+            var receivers = Player.List
                 .Where(p => Plugin.Instance.Config.Permissions.Any(permission => p.CheckPermission(permission)))
                 .ToHashSet();
 
             if (Plugin.Instance.Config.ToAllRaAuthorized)
             {
-                receivers.UnionWith(Player.List.Where(p => p.RemoteAdminAccess));
+                receivers = receivers.Union(Player.List.Where(p => p.RemoteAdminAccess)).ToHashSet();
             }
 
-            if (!string.IsNullOrEmpty(Plugin.Instance.Config.AdminsBroadcast))
-            {
-                string broadcastMessage = Plugin.Instance.Config.AdminsBroadcast
-                    .Replace("%nickname%", callingPlayer.Nickname)
-                    .Replace("%steamid%", callingPlayer.UserId)
-                    .Replace("%id%", callingPlayer.Id.ToString())
-                    .Replace("%value%", argumentsStr);
+            return receivers;
+        }
 
-                foreach (var receiver in receivers)
+        private void NotifyAdmins(Player callingPlayer, string argumentsStr, HashSet<Player> receivers)
+        {
+            var broadcastMessage = FormatMessage(Plugin.Instance.Config.AdminsBroadcast, callingPlayer, argumentsStr);
+            var consoleMessage = FormatMessage(Plugin.Instance.Config.ConsoleLog, callingPlayer, argumentsStr);
+
+            foreach (var receiver in receivers)
+            {
+                if (!string.IsNullOrEmpty(broadcastMessage))
                 {
                     receiver.Broadcast(Plugin.Instance.Config.AdminsBroadcastDuration, broadcastMessage);
                 }
-            }
 
-            if (!string.IsNullOrEmpty(Plugin.Instance.Config.ConsoleLog))
-            {
-                string consoleMessage = Plugin.Instance.Config.ConsoleLog
-                    .Replace("%nickname%", callingPlayer.Nickname)
-                    .Replace("%steamid%", callingPlayer.UserId)
-                    .Replace("%id%", callingPlayer.Id.ToString())
-                    .Replace("%value%", argumentsStr);
-
-                foreach (var receiver in receivers)
+                if (!string.IsNullOrEmpty(consoleMessage))
                 {
                     receiver.SendConsoleMessage(consoleMessage, "Silver");
                 }
             }
+        }
 
-            response = "Admins have been notified!";
-
-            return true;
+        private string FormatMessage(string messageTemplate, Player callingPlayer, string argumentsStr)
+        {
+            return string.IsNullOrEmpty(messageTemplate) ? null : messageTemplate
+                .Replace("%nickname%", callingPlayer.Nickname)
+                .Replace("%steamid%", callingPlayer.UserId)
+                .Replace("%id%", callingPlayer.Id.ToString())
+                .Replace("%value%", argumentsStr);
         }
     }
 }
