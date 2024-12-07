@@ -1,27 +1,27 @@
 # AdminAssist
 
-Плагин для сервера в SCP: Secret Laboratory с установленным [EXILED фреймворком](https://github.com/ExMod-Team/EXILED), позволяющий легко обращаться к администрации сервера посредство одной команды.
+A plugin for the SCP: Secret Laboratory server with the [EXILED framework](https://github.com/ExMod-Team/EXILED) installed, allowing easy communication with server administration through a single command.
 
-## Описание
+## Description
 
-Плагин предназначен для улучшения взаимодействия между игроками и администрацией сервера. AdminAssist позволяет игрокам легко запрашивать помощь или сообщать о чем-либо у сотрудников, у которых есть специальный доступ.
+The plugin is designed to enhance interaction between players and server administration. AdminAssist enables players to easily request help or report issues to staff members with special access.
 
-## Функции
+## Features
 
-- **Настраиваемые псевдонимы команд**: Установите несколько псевдонимов для команды, используемой для вызова помощи.
-- **Управление задержкой**: Предотвратите спам, настроив задержку для использования команд.
-- **Уведомления на основе разрешений**: Укажите, администраторы с какими правами будут отправляться запросы о помощи.
-- **Настройка сообщений**: Свободная настройка сообщений, которые будут получать администраторы.
+- **Custom Command Aliases**: Set multiple aliases for the command used to call for help.
+- **Cooldown Management**: Prevent spam by configuring a cooldown for command usage.
+- **Permission-Based Notifications**: Specify which administrators will receive help requests based on their permissions.
+- **Message Customization**: Fully customize the messages that administrators will receive.
 
 ## Installation
 
-1. Скачайте последнюю версию плагина со [страницы релизов](https://github.com/intjiraya/AdminAssist/releases).
-2. Переместите установленный файл `AdminAssist.dll` в папку `Plugins` вашего SCP:SL сервер.
-3. Полностью перезапустите сервер.
+1. Download the latest version of the plugin from the [releases page](https://github.com/intjiraya/AdminAssist/releases).
+2. Move the installed file `AdminAssist.dll` to the `Plugins` folder of your SCP:SL server.
+3. Completely restart the server.
 
 ## Configuration
 
-Файл конфигурации позволяет вам настроить различные параметры для плагина. Вот пример параметров конфигурации:
+The configuration file allows you to set various parameters for the plugin. Here is an example of the configuration parameters:
 
 ```yaml
 AdminAssist:
@@ -43,12 +43,12 @@ AdminAssist:
   to_all_ra_authorized: true
 ```
 
-Отредактируйте изначальные значения по мере необходимости в соответствии с требованиями вашего сервера.
+Edit the default values as needed according to your server's requirements.
 
-## Использование
+## Usage
 
-После установки и настройки игроки могут обратиться за помощью к администратору, используя указанную команду. Администраторы с соответствующими разрешениями будут получать уведомления, и им будет отправлено настроенное широковещательное сообщение.
+After installation and configuration, players can request help from an administrator using the specified command. Administrators with the appropriate permissions will receive notifications, and a customized broadcast message will be sent to them.
 
 ## Support
 
-Для любых вопросов или проблем, связанных с плагином, пожалуйста, откройте проблему в [репозитории GitHub](https://github.com/intjiraya/AdminAssist/issues).
+For any questions or issues related to the plugin, please open an issue in the [GitHub repository](https://github.com/intjiraya/AdminAssist/issues).
