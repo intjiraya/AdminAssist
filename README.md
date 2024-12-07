@@ -1,36 +1,30 @@
 # AdminAssist
 
-A plugin for the Exiled SCP:SL framework that allows players to call for admin assistance using customizable commands.
+Плагин для сервера в SCP: Secret Laboratory с установленным [EXILED фреймворком](https://github.com/ExMod-Team/EXILED), позволяющий легко обращаться к администрации сервера посредство одной команды.
 
-## Description
+## Описание
 
-AdminAssist is designed to enhance communication between players and server administrators in SCP: Secret Laboratory. This plugin enables players to request help from admins easily, with features like command aliases, cooldown management, and permission-based notifications.
+Плагин предназначен для улучшения взаимодействия между игроками и администрацией сервера. AdminAssist позволяет игрокам легко запрашивать помощь или сообщать о чем-либо у сотрудников, у которых есть специальный доступ.
 
-## Features
+## Функции
 
-- **Customizable Command Aliases**: Set multiple aliases for the command used to call for assistance.
-- **Cooldown Management**: Prevent spam by configuring a cooldown period for command usage.
-- **Permission-Based Notifications**: Specify which admin permissions will receive assistance requests.
-- **Broadcast Messages**: Customize the messages sent to admins when a player calls for help.
-- **Console Logging**: Log calls for assistance to the console for better oversight.
+- **Настраиваемые псевдонимы команд**: Установите несколько псевдонимов для команды, используемой для вызова помощи.
+- **Управление задержкой**: Предотвратите спам, настроив задержку для использования команд.
+- **Уведомления на основе разрешений**: Укажите, администраторы с какими правами будут отправляться запросы о помощи.
+- **Настройка сообщений**: Свободная настройка сообщений, которые будут получать администраторы.
 
 ## Installation
 
-1. Download the latest release of the AdminAssist plugin from the [releases page](https://github.com/intjiraya/AdminAssist/issues).
-2. Place the downloaded `.dll` file into the `plugins` folder of your SCP:SL Exiled server.
-3. Restart your server to load the plugin.
-4. Configure the plugin settings in the `Config.yml` file.
+1. Скачайте последнюю версию плагина со [страницы релизов](https://github.com/intjiraya/AdminAssist/releases).
+2. Переместите установленный файл `AdminAssist.dll` в папку `Plugins` вашего SCP:SL сервер.
+3. Полностью перезапустите сервер.
 
 ## Configuration
 
-The configuration file allows you to customize various settings for the plugin. Here’s an example of the configuration options:
+Файл конфигурации позволяет вам настроить различные параметры для плагина. Вот пример параметров конфигурации:
 
 ```yaml
 AdminAssist:
-  # Plugin Enabled?
-  is_enabled: true
-  # Enable debug mode?
-  debug: false
   # Command aliases for calling admins
   command_aliases: 
     - call
@@ -45,22 +39,16 @@ AdminAssist:
   admins_broadcast: "<color=#FFA500>(%id%) %nickname% called the admins</color>"
   # Duration of the broadcast message
   admins_broadcast_duration: 5
+  # If true, all players with RA permissions will receive requests.
+  to_all_ra_authorized: true
 ```
 
-Adjust the values as needed to fit your server's requirements.
+Отредактируйте изначальные значения по мере необходимости в соответствии с требованиями вашего сервера.
 
-## Usage
+## Использование
 
-Once installed and configured, players can call for admin assistance using the specified command. Admins with the appropriate permissions will receive notifications, and the configured broadcast message will be sent.
+После установки и настройки игроки могут обратиться за помощью к администратору, используя указанную команду. Администраторы с соответствующими разрешениями будут получать уведомления, и им будет отправлено настроенное широковещательное сообщение.
 
 ## Support
 
-For any issues or questions regarding the AdminAssist plugin, please open an issue on the [GitHub repository](https://github.com/intjiraya/AdminAssist/issues) or join our community Discord server for assistance.
-
-## Contributing
-
-Contributions are welcome! If you would like to contribute to the development of AdminAssist, please fork the repository and submit a pull request. Ensure to follow coding standards and include appropriate documentation for your changes.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/intjiraya/AdminAssist/blob/master/README.md) file for more details.
+Для любых вопросов или проблем, связанных с плагином, пожалуйста, откройте проблему в [репозитории GitHub](https://github.com/intjiraya/AdminAssist/issues).
