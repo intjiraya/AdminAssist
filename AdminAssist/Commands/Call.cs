@@ -29,7 +29,7 @@ public class Call : ICommand
         return true;
     }
 
-    private bool CanUseCommand(Player player, out string response)
+    private static bool CanUseCommand(Player player, out string response)
     {
         response = string.Empty;
 
@@ -55,21 +55,15 @@ public class Call : ICommand
         return string.Join(" ", arguments).Replace("<", "[").Replace(">", "]");
     }
 
-    private HashSet<Player> GetReceivers()
+    private static HashSet<Player> GetReceivers()
     {
-        HashSet<Player> receivers = Player.List
-            .Where(p => Plugin.Instance.Config.Permissions.Any(permission => p.CheckPermission(permission)))
+        return Player.List
+            .Where(p => Plugin.Instance.Config.Permissions.Any(permission => p.CheckPermission(permission)) ||
+                        (Plugin.Instance.Config.ToAllRaAuthorized && p.RemoteAdminAccess))
             .ToHashSet();
-
-        if (Plugin.Instance.Config.ToAllRaAuthorized)
-        {
-            receivers = receivers.Union(Player.List.Where(p => p.RemoteAdminAccess)).ToHashSet();
-        }
-
-        return receivers;
     }
 
-    private void NotifyAdmins(Player player, string argumentsStr, HashSet<Player> receivers)
+    private static void NotifyAdmins(Player player, string argumentsStr, HashSet<Player> receivers)
     {
         player.SessionVariables[LastCallCommandUsage] = DateTime.UtcNow;
 
@@ -78,21 +72,24 @@ public class Call : ICommand
 
         foreach (var receiver in receivers)
         {
-            if (!string.IsNullOrEmpty(broadcastMessage))
+            if (!string.IsNullOrWhiteSpace(broadcastMessage))
             {
                 receiver.Broadcast(Plugin.Instance.Config.AdminsBroadcastDuration, broadcastMessage);
             }
 
-            if (!string.IsNullOrEmpty(consoleMessage))
+            if (!string.IsNullOrWhiteSpace(consoleMessage))
             {
                 receiver.SendConsoleMessage(consoleMessage, "Silver");
             }
         }
     }
 
-    private string FormatMessage(string messageTemplate, Player player, string argumentsStr)
+    private static string FormatMessage(string messageTemplate, Player player, string argumentsStr)
     {
-        return string.IsNullOrEmpty(messageTemplate) ? null : messageTemplate
+        if (string.IsNullOrWhiteSpace(messageTemplate))
+            return null;
+
+        return messageTemplate
             .Replace("%nickname%", player.Nickname)
             .Replace("%steamid%", player.UserId)
             .Replace("%id%", player.Id.ToString())
